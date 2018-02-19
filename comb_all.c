@@ -125,12 +125,11 @@ int main(int argc, char **argv)
                 n_option = 1;
             }
             else if (memcmp(buf, "-r:", 3) == 0 || memcmp(buf, "-k:", 3) == 0) {
-                para_r_max = strtol(buf + 3, &bufp, 10);
+                para_r_min = para_r_max = strtol(buf + 3, &bufp, 10);
                 if (bufp == buf + 3) {
                     printf("-r: -k: 数値がありません。\n");
                     exit(1);
                 }
-                para_r_min = para_r_max;
                 r_min_option = 1;
                 r_max_option = 1;
             }
@@ -208,10 +207,12 @@ int main(int argc, char **argv)
     if (!r_max_option) {
         para_r_max = para_n;
     }
-    if (para_n < 0 || para_r_min < 0 || para_r_max < 0
-        || para_r_min > para_n || para_r_max > para_n) {
-        printf("nは0以上でなければなりません。\n");
-        printf("rは0以上かつrはn以下でなければなりません。\n");
+    if (para_n < 0 || para_r_min < 0 || para_r_max < 0) {
+        printf("n と r は 0 以上でなければなりません。\n");
+        exit(1);
+    }
+    if (!multi_option && (para_r_min > para_n || para_r_max > para_n)) {
+        printf("重複組み合わせでないとき r は n 以下でなければなりません。\n");
         exit(1);
     }
     if (para_r_min > para_r_max) {
