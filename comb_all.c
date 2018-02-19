@@ -13,6 +13,7 @@ int total_cnt = 0;
 int count_option = 0;
 int count_only_option = 0;
 int suspend_option = 0;
+int multi_option = 0;
 
 //配列の値を出力します。
 void pr(int size)
@@ -63,6 +64,35 @@ void comb(int n, int r)
     }
 }
 
+/*----
+組み合わせを得ます。
+重複を許します。
+----*/
+void comb_m(int n, int r)
+{
+    if (r == 0) {
+        pr(0);
+        return;
+    }
+    ary[0] = 0;
+    for (int i = 1; i <= r; i++) {
+        ary[i] = 1;
+    }
+    while (ary[0] == 0) {
+        pr(r);
+        for (int i = r; i >= 0; i--) {
+            int tmp = ary[i] + 1;
+            ary[i] = tmp;
+            if (tmp <= n) {
+                for (int j = i + 1; j <= r; j++) {
+                    ary[j] = tmp;
+                }
+                break;
+            }
+        }
+    }
+}
+
 int main(int argc, char **argv)
 {
     int data_cnt = 0;
@@ -73,7 +103,7 @@ int main(int argc, char **argv)
     char *bufp;
 
     if (argc == 1) {
-         delim[0] = ',';
+        delim[0] = ',';
         delim[1] = '\0';
         para_n = 5;
         para_r_min = 1;
@@ -146,6 +176,9 @@ int main(int argc, char **argv)
             else if (memcmp(buf, "-s", 3) == 0) {
                 suspend_option = 1;
             }
+            else if (memcmp(buf, "-m", 3) == 0) {
+                multi_option = 1;
+            }
             else if (*buf == '-') {
                 printf("該当するオプションはありません。\n");
                 exit(1);
@@ -186,7 +219,8 @@ int main(int argc, char **argv)
         exit(1);
     }
     for (int i = para_r_min; i <= para_r_max; i++) {
-        comb(para_n, i);
+        if (multi_option) comb_m(para_n, i);
+        else comb(para_n, i);
     }
     if (count_only_option) {
         printf("%d", total_cnt);
